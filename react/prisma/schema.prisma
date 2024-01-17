@@ -19,7 +19,6 @@ model user{
   verify String @default("false")
   image String?
   chat_list chat[]
-  sender cht[]
 }
 
 model chat{
@@ -28,7 +27,15 @@ model chat{
   author user @relation(fields: [authorId], references: [id])
   authorId Int
   image String?
-  sender user @relation(fields: [senderId], references: [id])
-  senderId Int
+  user_list Int[]
+  messages message[]
+}
+
+model message{
+  id Int @default(autoincrement()) @id
+  chat chat @relation(fields: [chat_id], references: [id])
+  chat_id Int
+  date DateTime @default(now())
+  sender Int
 }
 
