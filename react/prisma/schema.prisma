@@ -1,5 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,6 +9,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 
 model user{
   id Int @default(autoincrement()) @id
@@ -31,6 +33,7 @@ model chat{
 
 model message{
   id Int @default(autoincrement()) @id
+  text String
   chat chat @relation(fields: [chat_id], references: [id])
   chat_id Int
   date DateTime @default(now())

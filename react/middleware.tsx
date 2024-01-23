@@ -14,11 +14,24 @@ export default async function middleware(request:NextRequest) {
       if(!cookie)
       {
        return NextResponse.redirect(new URL('/sign-in', request.url))
- 
       }
+    }
+  }
+  else if(request.nextUrl.pathname === ('/sign-in') || request.nextUrl.pathname === ('/sign-up'))
+  {
+    if(!cookie){
+      cookie =  cookies().get('next-auth.session-token')
+      if(cookie)
+      {
+       return NextResponse.redirect(new URL('/', request.url))
+      }
+    }
+    else
+    {
+      return NextResponse.redirect(new URL('/', request.url))
     }
   }
 }
 export const config = {
-    matcher: ['/',  '/signin', ]
+    matcher: ['/',  '/sign-in', '/sign-up']
   }

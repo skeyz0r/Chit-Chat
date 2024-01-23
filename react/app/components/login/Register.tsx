@@ -30,6 +30,7 @@ export default function Register()
         }
     }
 
+
     return(
         <main className="flex flex-col justify-center items-center min-h-screen">
             <form className="flex flex-col">

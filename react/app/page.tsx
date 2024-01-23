@@ -14,6 +14,7 @@ export default async function Home() {
       authorId: Number(session?.user.id)
     },
     select:{
+      id:true,
       authorId: true,
       name: true,
       image: true
@@ -23,7 +24,7 @@ export default async function Home() {
 
   return (
     <>
-      <Panel chat={chats}/>
+      <Panel chat={chats} authorId={Number(session?.user.id)}/>
     </>
   )
 }

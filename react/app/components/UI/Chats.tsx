@@ -4,10 +4,18 @@ import { CiCirclePlus } from "react-icons/ci";
 import { IoCloseSharp } from "react-icons/io5";
 import { useState } from "react";
 
-export default function Chats(chat:{list:Array<any>, value:any, setValue:any})
+export default function Chats(chat:{list:Array<any>, value:any, setValue:any, authorId:Number})
 {
 
     const [newChat, setChat] = useState('hidden')
+    const [chatVal, setChatVal] = useState({authorId:chat.authorId,name:'',contacts:[]})
+
+async function createChat()
+{
+    await fetch('/api/newchat', {method: 'POST',
+    body: JSON.stringify({chatVal})
+})
+}
 
     return(
         <div className="flex flex-col p-2 w-[250px] h-full border-r border-b bg-white">
@@ -19,9 +27,9 @@ export default function Chats(chat:{list:Array<any>, value:any, setValue:any})
                 </div>
                 <div className="flex flex-col">
                 <label>Chat name:</label>
-                <input className="border rounded" type="text" name="chatName" placeholder="My ChitChat"/>
+                <input value={chatVal.name} onChange={(e)=>{setChatVal({...chatVal, name:e.currentTarget.value})}} className="border rounded" type="text" name="chatName" placeholder="My ChitChat"/>
                 <label>Chat image</label>
-                <button className="p-1 border rounded-lg self-cetner text-black">Create</button>
+                <button className="p-1 border rounded-lg self-cetner text-black" onClick={()=>{createChat()}}>Create</button>
                 </div>
             </div>
 
