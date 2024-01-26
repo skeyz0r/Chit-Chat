@@ -2,6 +2,7 @@ import Panel from "./components/UI/Panel";
 import db from "./components/prisma";
 import { authOptions } from "./components/auth";
 import { getServerSession } from "next-auth"
+import Navigator from "./components/UI/Navigator";
 
 
 export default async function Home() {
@@ -24,6 +25,7 @@ export default async function Home() {
 
   return (
     <>
+      <Navigator id={session?.user.id}/>
       <Panel chat={chats} authorId={Number(session?.user.id)}/>
     </>
   )

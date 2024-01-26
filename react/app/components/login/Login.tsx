@@ -47,7 +47,7 @@ export default function Login()
             <label>Password</label>
             <input type="password" value={password}  onChange={(e) => setPassword(e.currentTarget.value)} name="password" placeholder="username"/>
             </div>
-            <button onClick={(e)=>{submit(e)}}>Sign Up</button>
+            <button onClick={(e)=>{submit(e)}}>Sign in</button>
         </form>
     </main>
 )

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import Navigator from './components/UI/Navigator'
+
 
 
 export const metadata: Metadata = {
@@ -16,7 +16,6 @@ export default function RootLayout({
   return (
     <html lang="en" className=' overflow-y-hidden h-full'>
       <body className='h-full'>
-        <Navigator/>
         {children}
       </body>
     </html>
