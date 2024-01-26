@@ -19,6 +19,7 @@ model user{
   verify String @default("false")
   image String?
   chat_list chat[]
+  friends Int[]
 }
 
 model chat{

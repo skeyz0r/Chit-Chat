@@ -5,14 +5,14 @@ export  async function POST(req:Request)
 {
     try{
         const body = await req.json()
-        const {authorId, chatId} = body;
+        const {chatId} = body;
 
-console.log(body)
         const data = await db.message.findMany({
-            where:{chat_id:chatId, sender:authorId},
+            where:{chat_id:chatId},
             select:{
                 text: true,
-                date:true
+                date:true,
+                sender:true
             }
         })
 
