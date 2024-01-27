@@ -12,7 +12,12 @@ export default async function Home() {
 
   const chats = await db.chat.findMany({
     where:{
-      authorId: Number(session?.user.id)
+      OR: [
+        {
+          authorId: Number(session?.user.id)
+        },
+       {user_list:{has:Number(session?.user.id)}}
+      ],
     },
     select:{
       id:true,

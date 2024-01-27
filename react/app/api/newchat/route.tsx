@@ -7,9 +7,9 @@ export  async function POST(req:Request)
 
     try{
         const body = await req.json()
-        const {chatVal} = body;
-        const {authorId, name, contacts} = chatVal;
-
+        const {chatVal, select} = body;
+        const {authorId, name} = chatVal;
+        let list:number[] = []
 
         const existingChat =  await db.chat.findMany({
             where:{name:name, authorId:authorId}
@@ -22,7 +22,7 @@ export  async function POST(req:Request)
         }
         else
         {
-            if(contacts.length === 0)
+            if(select.length === 0)
             {
                 await db.chat.create({
                     data:{
@@ -30,21 +30,31 @@ export  async function POST(req:Request)
                         name:name,
                     }}
                 )
+                return NextResponse.json({answer:'Chat created', message:""}, {status:200})
             }
             else
             {
-            await db.chat.create({
-                data:{
-                    authorId:authorId,
-                    name:name,
-                    user_list:contacts
+                for(let i = 0; i<select.length; i++)
+                {
+                    const data = await db.user.findUnique({
+                        where:{username:select[i]},
+                        select:{id:true}
+                    })
+                    list.push(Number(data?.id))
                 }
-            })
+
+                await db.chat.create({
+                        data:{
+                            authorId:authorId,
+                            name:name,
+                            user_list: list
+                        }
+                })
+            }
+
+            return NextResponse.json({answer:name, message:"Chat created!"}, {status:200})
         
     }
-    return NextResponse.json({answer:name, message:"Chat created!"}, {status:200})
-    }
-
     }
 catch(error)
 {

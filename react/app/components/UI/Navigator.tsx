@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import Toast from "../Toast"
+import Toast from "./Toast"
 
 interface user{
     username:string
@@ -51,11 +51,14 @@ export default function Navigator(info:{id:string | undefined})
             <div className="absolute">
             <input className="p-2 rounded outline-none" value={usr}
              onChange={(e)=>{onChange(e)}} placeholder="Find friends"></input>
-             <div className={`${finder} flex flex-col gap-3 p-3 h-40 bg-black w-60`}>
+             <div className={`${finder} flex flex-col gap-3 p-3  bg-black w-60`}>
       { 
       found.map((data, key) =>{
         return(
-          <p className="text-white" onClick={()=>{addFriend(data.username)}} key={key}>{data.username}</p>
+          
+          <p className={`text-white border-black ${found[0].username !== '0 results' ?
+          'hover:border-white border p-1 cursor-pointer' : 'self-center'}`}
+           onClick={()=>{addFriend(data.username)}} key={key}>{data.username}</p>
         )
     })
    
