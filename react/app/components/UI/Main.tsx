@@ -27,7 +27,6 @@ useEffect(()=>{
  .then(response => response.json())
  .then(response => {for(let i = 0; i < response.answer.length; i++)
     {
-    console.log(response.answer.length, i)
     setLoaded(oldArray =>[...oldArray, {text: response.answer[i].text, date:response.answer[i].date, sender:response.answer[i].sender}]) 
  }})
     }
@@ -39,9 +38,11 @@ useEffect(()=>{
 async function newMessage()
 {
     const chatId = info.chatId
+    const sender = info.authordId
+
   await fetch('/api/newmessage', {method: 'POST',
-   body: JSON.stringify({text, chatId})})
-   setLoaded([...loaded, {text: text, date:Date.now().toString(), sender:info.authordId}])
+   body: JSON.stringify({text, chatId, sender})})
+   setLoaded([...loaded, {text: text, date:Date.now().toString(), sender:sender}])
 }
 
     return(
@@ -50,7 +51,6 @@ async function newMessage()
             <div className="flex overflow-y-scroll flex-col h-[85%]">
             {
     loaded.map((data, key) =>{
-        console.log(data.sender)
         return(
             <Message text={data.text} date={data.date} key={key} sender={data.sender === info.authordId ? true : false}/>
         )

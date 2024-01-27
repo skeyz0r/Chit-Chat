@@ -5,13 +5,13 @@ export  async function POST(req:Request)
 {
     try{
         const body = await req.json()
-        const {text, chatId, authorId} = body;
+        const {text, chatId, sender} = body;
 
       await db.message.create({
             data:{  
                 text: text,
                 chat_id: chatId,
-                sender: authorId
+                sender: sender
             }
         })
 
