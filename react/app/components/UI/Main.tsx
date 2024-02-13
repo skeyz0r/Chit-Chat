@@ -44,14 +44,15 @@ async function newMessage()
     const sender = info.authordId
 
 
-
-const Pusher = require("pusher");
+    const Pusher = require("pusher");
 
 const pusher = new Pusher({
   appId: "1749250",
   key: "2dbe80aadf1ff824391d",
   secret: "1358e670af34f159331f",
-  cluster: "us2"});
+  cluster: "us2",
+   useTLS:true 
+});
 
 
   await fetch('/api/newmessage', {method: 'POST',
