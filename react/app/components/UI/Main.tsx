@@ -6,14 +6,15 @@ import Message from "./Message"
 interface message {
     text: string,
     date: string,
-    sender:Number
+    sender:Number,
 }
 
-export default function Main(info:{value:string, authordId:Number, chatId:Number})
+export default function Main(info:{pusher:object, value:string, authordId:Number, chatId:Number})
 {
 
 const [text, setText] = useState('')
 const [loaded, setLoaded] = useState<message[]>([]);
+const [amt, setAmt] = useState(0)
 
 
 useEffect(()=>{
@@ -27,8 +28,10 @@ useEffect(()=>{
  .then(response => response.json())
  .then(response => {for(let i = 0; i < response.answer.length; i++)
     {
-    setLoaded(oldArray =>[...oldArray, {text: response.answer[i].text, date:response.answer[i].date, sender:response.answer[i].sender}]) 
+        setAmt(prevVal => prevVal + 1);
+        setLoaded(oldArray =>[...oldArray, {text: response.answer[i].text, date:response.answer[i].date, sender:response.answer[i].sender}]) 
  }})
+ 
     }
 },[ info.chatId])
 
@@ -40,10 +43,34 @@ async function newMessage()
     const chatId = info.chatId
     const sender = info.authordId
 
+
+
+const Pusher = require("pusher");
+
+const pusher = new Pusher({
+  appId: "1749250",
+  key: "2dbe80aadf1ff824391d",
+  secret: "1358e670af34f159331f",
+  cluster: "us2"});
+
+
   await fetch('/api/newmessage', {method: 'POST',
    body: JSON.stringify({text, chatId, sender})})
    setLoaded([...loaded, {text: text, date:Date.now().toString(), sender:sender}])
+   pusher.trigger("my-channel", "my-event", {
+    message: text
+  });
 }
+
+
+
+
+
+const pp = {
+    app: process.env.APP_ID,
+    key: process.env.PUSHER_KEY
+}
+
 
     return(
         <div className="flex  w-full flex-col">
