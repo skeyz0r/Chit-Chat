@@ -5,7 +5,7 @@ import { useState } from "react"
 import Chats from "./Chats"
 import Main from "./Main"
 
-export default function Panel(info:{pusher:object, chat:Array<any>, authorId:Number})
+export default function Panel(info:{chat:Array<any>, authorId:Number})
 {
     const [chat, setChat] = useState({name:'', id:0})
 
@@ -13,7 +13,7 @@ export default function Panel(info:{pusher:object, chat:Array<any>, authorId:Num
     return(
         <main className="flex h-[95%]">
         <Chats list={info.chat} value={chat} setValue={setChat} authorId={info.authorId}/>
-        <Main pusher={info.pusher} value={chat.name} authordId={info.authorId} chatId={chat.id}/>
+        <Main value={chat.name} authordId={info.authorId} chatId={chat.id}/>
         </main>
     )
 }

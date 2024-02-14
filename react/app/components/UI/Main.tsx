@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Message from "./Message"
+import { pusherClient } from "../pusher"
 
 interface message {
     text: string,
@@ -9,12 +10,14 @@ interface message {
     sender:Number,
 }
 
-export default function Main(info:{pusher:object, value:string, authordId:Number, chatId:Number})
+export default function Main(info:{value:string, authordId:Number, chatId:Number})
 {
 
 const [text, setText] = useState('')
 const [loaded, setLoaded] = useState<message[]>([]);
 const [amt, setAmt] = useState(0)
+
+
 
 
 useEffect(()=>{
@@ -32,10 +35,14 @@ useEffect(()=>{
         setLoaded(oldArray =>[...oldArray, {text: response.answer[i].text, date:response.answer[i].date, sender:response.answer[i].sender}]) 
  }})
  
+pusherClient.subscribe(String(chatId))
+pusherClient.bind('newMessage', messageHandler)
     }
 },[ info.chatId])
 
-
+const messageHandler = (text:string)=>{
+    setLoaded(prevLoaded => ([...prevLoaded, {text: text, date: Date.now().toString(), sender: info.authordId}]))
+}
 
 
 async function newMessage()
@@ -44,23 +51,8 @@ async function newMessage()
     const sender = info.authordId
 
 
-    const Pusher = require("pusher");
-
-const pusher = new Pusher({
-  appId: "1749250",
-  key: "2dbe80aadf1ff824391d",
-  secret: "1358e670af34f159331f",
-  cluster: "us2",
-   useTLS:true 
-});
-
-
   await fetch('/api/newmessage', {method: 'POST',
    body: JSON.stringify({text, chatId, sender})})
-   setLoaded([...loaded, {text: text, date:Date.now().toString(), sender:sender}])
-   pusher.trigger("my-channel", "my-event", {
-    message: text
-  });
 }
 
 
