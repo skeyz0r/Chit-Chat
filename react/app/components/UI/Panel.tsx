@@ -5,7 +5,7 @@ import { useState } from "react"
 import Chats from "./Chats"
 import Main from "./Main"
 
-export default function Panel(info:{username:string, chat:Array<any>, authorId:Number})
+export default function Panel(info:{username:string | undefined, chat:Array<any>, authorId:Number})
 {
     const [chat, setChat] = useState({name:'', id:0})
 

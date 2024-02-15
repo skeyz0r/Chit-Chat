@@ -9,7 +9,7 @@ import { signOut } from "next-auth/react";
 
 
 
-export default function Chats(chat:{username:string, list:Array<any>, value:any, setValue:any, authorId:Number})
+export default function Chats(chat:{username:string | undefined, list:Array<any>, value:any, setValue:any, authorId:Number})
 {
 
     const [newChat, setChat] = useState('hidden')

@@ -12,7 +12,7 @@ interface message {
     sender:Number,
 }
 
-export default function Main(info:{value:string, username:string, authordId:Number, chatId:Number})
+export default function Main(info:{value:string, username:string | undefined, authordId:Number, chatId:Number})
 {
 
 const [text, setText] = useState('')

@@ -5,7 +5,7 @@ import { MdDeleteForever } from "react-icons/md";
 import { useState, useEffect } from "react";
 
 
-export default function News(check:{true:boolean, authorId:Number, name:string})
+export default function News(check:{true:boolean, authorId:Number, name:string | undefined})
 {
 
     const [friends, setFriends] = useState([])
