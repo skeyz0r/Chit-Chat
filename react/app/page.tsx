@@ -32,7 +32,8 @@ export default async function Home() {
       id: Number(session?.user.id)
     },
     select:{
-      username:true
+      username:true,
+      id:true
     }
   })
 
@@ -41,7 +42,7 @@ export default async function Home() {
   return (
     <>
       <Navigator id={session?.user.id}/>
-      <Panel username={user?.username} chat={chats} authorId={Number(session?.user.id)}/>
+      <Panel username={user?.username} id={user?.id} chat={chats} authorId={Number(session?.user.id)}/>
     </>
   )
 }

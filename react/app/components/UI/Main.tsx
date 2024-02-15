@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Message from "./Message"
 import { pusherClient } from "../pusher"
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -9,15 +9,20 @@ import News from "./News"
 interface message {
     text: string,
     date: string,
-    sender:Number,
+    sender: Number,
 }
 
-export default function Main(info:{value:string, username:string | undefined, authordId:Number, chatId:Number})
+export default function Main(info:{value:string, username:string | undefined, id:Number | undefined, authordId:Number, chatId:Number})
 {
 
 const [text, setText] = useState('')
-const [loaded, setLoaded] = useState<message[]>([]);
+const [loaded, setLoaded] = useState<message[]>([])
 const [newMsg, setNew] = useState(false)
+const endRed = useRef<HTMLInputElement>(null)
+
+const scrollToEnd = () => {
+    endRed.current?.scrollIntoView({behavior: "smooth"})
+}
 
 useEffect(()=>{
 setLoaded([])
@@ -49,14 +54,15 @@ function setMessage(response:any)
     }
     for(let i = 0; i < response.answer.length; i++)
     {
+        console.log('Answer', response.answer[i].sender)
         setLoaded(oldArray =>[...oldArray, {text: response.answer[i].text, date:response.answer[i].date, sender:response.answer[i].sender}]) 
  }}
 
 
 const messageHandler = (text:string)=>{
     setLoaded(prevLoaded => [
-        { text: text, date: Date.now().toString(), sender: info.authordId },
-        ...prevLoaded
+        ...prevLoaded,
+        { text: text, date: Date.now().toString(), sender: Number(info.id)},
       ]);}
 
 
@@ -65,8 +71,9 @@ async function newMessage()
     const chatId = info.chatId
     const sender = info.authordId
     setNew(false)
-  await fetch('/api/newmessage', {method: 'POST',
+   fetch('/api/newmessage', {method: 'POST',
    body: JSON.stringify({text, chatId, sender})})
+
 }
 
 
@@ -79,7 +86,7 @@ async function newMessage()
         <div className="flex  w-full flex-col">
         <h2 className={`p-2 border-md text-2xl w-full flex justify-center items-center border `}>{info.value}</h2>
     
-<div  className={`${loaded.length === 0 ? 'justify-center' : ''} px-4 flex overflow-y-scroll flex-col-reverse h-[85%]`}>
+<div  className={`${loaded.length === 0 ? 'justify-center' : ''} px-4 flex overflow-y-scroll flex-col h-[85%]`}>
     { newMsg ? <p className="self-center">Start the chit chat in {info.value}</p> :
         loaded.length === 0 ? <div className="self-center items-center flex gap-4"><p className="text-3xl uppercase">Loading</p>
    <AiOutlineLoading3Quarters size={30} id="spinner"/></div> :
