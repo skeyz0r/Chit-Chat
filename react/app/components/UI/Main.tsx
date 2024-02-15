@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react"
 import Message from "./Message"
 import { pusherClient } from "../pusher"
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import News from "./News"
 
 interface message {
     text: string,
@@ -10,18 +12,16 @@ interface message {
     sender:Number,
 }
 
-export default function Main(info:{value:string, authordId:Number, chatId:Number})
+export default function Main(info:{value:string, username:string, authordId:Number, chatId:Number})
 {
 
 const [text, setText] = useState('')
 const [loaded, setLoaded] = useState<message[]>([]);
-const [amt, setAmt] = useState(0)
-
-
-
+const [newMsg, setNew] = useState(false)
 
 useEffect(()=>{
-
+setLoaded([])
+setNew(false)
     if(info.chatId !== 0)
     {
     const chatId = info.chatId
@@ -29,28 +29,42 @@ useEffect(()=>{
   fetch('/api/allmessage', {method: 'POST',
  body: JSON.stringify({ authorId, chatId})})
  .then(response => response.json())
- .then(response => {for(let i = 0; i < response.answer.length; i++)
-    {
-        setAmt(prevVal => prevVal + 1);
-        setLoaded(oldArray =>[...oldArray, {text: response.answer[i].text, date:response.answer[i].date, sender:response.answer[i].sender}]) 
- }})
+ .then(response => {setMessage(response)})
  
+
 pusherClient.subscribe(String(chatId))
 pusherClient.bind('newMessage', messageHandler)
+return()=>{
+    pusherClient.unsubscribe("newMessage")
+}
     }
+
 },[ info.chatId])
 
+function setMessage(response:any)
+{
+    if(response.answer.length === 0)
+    {
+        setNew(true)
+    }
+    for(let i = 0; i < response.answer.length; i++)
+    {
+        setLoaded(oldArray =>[...oldArray, {text: response.answer[i].text, date:response.answer[i].date, sender:response.answer[i].sender}]) 
+ }}
+
+
 const messageHandler = (text:string)=>{
-    setLoaded(prevLoaded => ([...prevLoaded, {text: text, date: Date.now().toString(), sender: info.authordId}]))
-}
+    setLoaded(prevLoaded => [
+        { text: text, date: Date.now().toString(), sender: info.authordId },
+        ...prevLoaded
+      ]);}
 
 
 async function newMessage()
 {
     const chatId = info.chatId
     const sender = info.authordId
-
-
+    setNew(false)
   await fetch('/api/newmessage', {method: 'POST',
    body: JSON.stringify({text, chatId, sender})})
 }
@@ -58,32 +72,31 @@ async function newMessage()
 
 
 
-
-const pp = {
-    app: process.env.APP_ID,
-    key: process.env.PUSHER_KEY
-}
-
-
     return(
+        info.value === 'news' ? <News true={true} authorId={info.authordId} name={info.username}/> :
+       
+        info.value === 'news' ? <News true={true} authorId={info.authordId} name={info.username}/> : info.value === 'profile' ? <News authorId={info.authordId} true={false} name={info.username}/>  : info.value === '' ?  <News authorId={info.authordId} true={true} name={info.username}/> :
         <div className="flex  w-full flex-col">
-            <h2 className={`p-2 border-md text-2xl self-end`}>{info.value}</h2>
-            <div className="flex overflow-y-scroll flex-col h-[85%]">
-            {
-    loaded.map((data, key) =>{
-        return(
-            <Message text={data.text} date={data.date} key={key} sender={data.sender === info.authordId ? true : false}/>
-        )
-    })
-   }
-            </div>
-            {
-                info.value === '' ? "select chat" :
-                <div className="bottom-0 w-full items-center self-end flex justify-evenly border-t h-[15%]">
-                    <input value={text} onChange={(e)=>{setText(e.currentTarget.value)}} className="w-[70%] h-10 p-2 text-black outline-none rounded-lg" placeholder="Say hi!"/>
-                    <button className="p-2 rounded-e-md border-black border" onClick={()=>{newMessage()}}>Chat</button>
-                </div>
-            }
-        </div>
+        <h2 className={`p-2 border-md text-2xl w-full flex justify-center items-center border `}>{info.value}</h2>
+    
+<div  className={`${loaded.length === 0 ? 'justify-center' : ''} px-4 flex overflow-y-scroll flex-col-reverse h-[85%]`}>
+    { newMsg ? <p className="self-center">Start the chit chat in {info.value}</p> :
+        loaded.length === 0 ? <div className="self-center items-center flex gap-4"><p className="text-3xl uppercase">Loading</p>
+   <AiOutlineLoading3Quarters size={30} id="spinner"/></div> :
+    
+
+loaded.map((data, key) =>{
+    return(
+<Message id={String(key)} text={data.text} date={data.date} key={key} sender={data.sender === info.authordId ? true : false}/>
+)
+})
+}
+</div>
+<div className="bottom-0 w-full items-center self-end flex justify-evenly border-t mb-4">
+    <textarea value={text} onChange={(e)=>{setText(e.currentTarget.value)}} className="border my-3 w-[70%] h-32 py-4 resize-none p-2 text-black outline-none rounded-lg" placeholder="Say hi!"/>
+    <button className="p-2 rounded-e-md border-black border" onClick={()=>{newMessage()}}>Chat</button>
+</div>
+
+</div>
     )
 }

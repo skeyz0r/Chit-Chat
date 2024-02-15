@@ -3,11 +3,13 @@
 import { CiCirclePlus } from "react-icons/ci";
 import { IoCloseSharp } from "react-icons/io5";
 import { FaCheck } from "react-icons/fa";
+import { GiRamProfile } from "react-icons/gi";
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 
 
 
-export default function Chats(chat:{list:Array<any>, value:any, setValue:any, authorId:Number})
+export default function Chats(chat:{username:string, list:Array<any>, value:any, setValue:any, authorId:Number})
 {
 
     const [newChat, setChat] = useState('hidden')
@@ -44,13 +46,12 @@ function selector(data:string)
       } else {
         setSelect([...select, data]);
 }
-  
-console.log(select)
+
 }
 
 
     return(
-        <div className="flex flex-col p-2 w-[250px] h-full border-r border-b bg-white">
+        <div className="flex flex-col justify-between p-2 w-[250px] h-full border-r border-b bg-white">
 
             <div className={`${newChat} absolute left-1/2  bg-white border-lg shadow-md p-2`}>
                 <div>
@@ -93,7 +94,25 @@ console.log(select)
         )
     })
    }
+
     </div>
+    <div>
+    <p className="mb-3 px-2 cursor-pointer" onClick={()=>{signOut({
+                redirect:true,
+                callbackUrl: `${window.location.origin}/sign-in`
+            })}}>Sign out</p>
+    <div className=" w-full rounded-md border shadow-md mb-3 h-20 flex">
+    <div  onClick={()=>{chat.setValue({id:0, name:'profile'})}} className="w-full cursor-pointer 
+     px-2 items-center flex justify-evenly">
+    <div className="rounded-full p-3  border self-center">
+        <GiRamProfile size={30}/>
+    </div>
+    <p >{chat.username}</p>
+   </div>
+
+</div>
+        </div>
         </div>
     )
+    
 }
