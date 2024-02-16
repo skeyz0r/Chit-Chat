@@ -27,22 +27,13 @@ export default async function Home() {
     }
   })
 
-  const user = await db.user.findFirst({
-    where:{
-      id: Number(session?.user.id)
-    },
-    select:{
-      username:true,
-      id:true
-    }
-  })
 
 
 
   return (
     <>
       <Navigator id={session?.user.id}/>
-      <Panel username={user?.username} id={user?.id} chat={chats} authorId={Number(session?.user.id)}/>
+      <Panel chat={chats} authorId={Number(session?.user.id)}/>
     </>
   )
 }

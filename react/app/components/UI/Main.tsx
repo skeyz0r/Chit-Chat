@@ -12,7 +12,7 @@ interface message {
     sender: Number,
 }
 
-export default function Main(info:{value:string, username:string | undefined, id:Number | undefined, authordId:Number, chatId:Number})
+export default function Main(info:{value:string, username:string | undefined,  authordId:Number, chatId:Number})
 {
 
 const [text, setText] = useState('')
@@ -62,25 +62,22 @@ function setMessage(response:any)
  }}
 
 
+const messageHandler = (text:string)=>{
+    setLoaded(prevLoaded => [
+        ...prevLoaded,
+        { text: text, date: Date.now().toString(), sender: Number(info.authordId)},
+      ]);
+    }
 
 
-async function messageHandler(value:string | null)
+
+async function newMessage()
 {
+    const chatId = info.chatId
+    const sender = info.authordId
     setNew(false)
-    if(value === null)
-    {
-        const chatId = info.chatId
-    const sender = info.id
    fetch('/api/newmessage', {method: 'POST',
    body: JSON.stringify({text, chatId, sender})})
-    }
-    else
-    {
-   setLoaded(prevLoaded => [
-    ...prevLoaded,
-    { text: value, date: Date.now().toString(), sender: Number(info.id)},
-  ]);
-}
 }
 
 
@@ -105,7 +102,7 @@ loaded.map((data, key) =>{
 </div>
 <div className="bottom-0 w-full items-center self-end flex justify-evenly border-t mb-4">
     <textarea value={text} onChange={(e)=>{setText(e.currentTarget.value)}} className="border my-3 w-[70%] h-32 py-4 resize-none p-2 text-black outline-none rounded-lg" placeholder="Say hi!"/>
-    <button className="p-2 rounded-e-md border-black border" onClick={()=>{messageHandler(null)}}>Chat</button>
+    <button className="p-2 rounded-e-md border-black border" onClick={()=>{newMessage()}}>Chat</button>
 </div>
 
 </div>
