@@ -64,17 +64,23 @@ function setMessage(response:any)
 
 
 
-async function messageHandler(text:string)
+async function messageHandler(value:string | null)
 {
-    const chatId = info.chatId
-    const sender = info.id
     setNew(false)
+    if(value === null)
+    {
+        const chatId = info.chatId
+    const sender = info.id
    fetch('/api/newmessage', {method: 'POST',
    body: JSON.stringify({text, chatId, sender})})
+    }
+    else
+    {
    setLoaded(prevLoaded => [
     ...prevLoaded,
-    { text: text, date: Date.now().toString(), sender: Number(info.id)},
+    { text: value, date: Date.now().toString(), sender: Number(info.id)},
   ]);
+}
 }
 
 
@@ -99,7 +105,7 @@ loaded.map((data, key) =>{
 </div>
 <div className="bottom-0 w-full items-center self-end flex justify-evenly border-t mb-4">
     <textarea value={text} onChange={(e)=>{setText(e.currentTarget.value)}} className="border my-3 w-[70%] h-32 py-4 resize-none p-2 text-black outline-none rounded-lg" placeholder="Say hi!"/>
-    <button className="p-2 rounded-e-md border-black border">Chat</button>
+    <button className="p-2 rounded-e-md border-black border" onClick={()=>{messageHandler(null)}}>Chat</button>
 </div>
 
 </div>
