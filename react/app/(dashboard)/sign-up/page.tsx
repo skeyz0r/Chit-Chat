@@ -1,8 +1,10 @@
-import Register from "@/app/components/login/Register"
+import SignUp from "@/app/components/log/Sign_up";
 
-export default function SignUp()
+
+
+export default function SignUpPage()
 {
     return(
-        <Register/>
+       <SignUp/>
     )
 }
