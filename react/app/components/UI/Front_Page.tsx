@@ -26,7 +26,7 @@ export default function FrontPage(props:{session:any})
 
     return(
         <>
-        <Toast setToast={setToast} value={toast.value} state={toast.state} error={toast.error}/>
+        <Toast Toast={setToast} value={toast.value} state={toast.state} error={toast.error}/>
         <LeftBar setToast={setToast} setNewChat={setNewChat} setChat={setChat} username={String(props.session.user.name)} id={Number(props.session?.user.id)}/>
        { chat.id ?
         <Chat_UI chat_name={chat.name} chat_id={chat.id} user_id={Number(props.session.user.id)}/>
