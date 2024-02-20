@@ -31,8 +31,8 @@ export default function SignUp()
                  else
                  {
                     signIn('',{
-                     callbackUrl: `/main`,
-                 })
+                        callbackUrl: `${window.location.origin}/sign-in`
+                    })
         }
             }
     }
