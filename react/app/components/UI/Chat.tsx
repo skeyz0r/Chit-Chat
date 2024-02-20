@@ -1,62 +1,60 @@
-'use client'
-import { useState, useEffect } from "react"
-import { pusherClient } from "../pusher"
+
+import { useState, useEffect, useRef } from "react";
+import { pusherClient } from "../pusher";
 
 interface message {
-    text:string,
-    date:string,
-    sender:string,
-    user_list:any
+    text: string;
+    date: string;
+    sender: string;
+    user_list: any;
 }
 
+export default function Chat_UI(props: { chat_id: Number | undefined, chat_name: string | undefined, user_id: Number }) {
+    const [messages, setMessages] = useState<message[]>([]);
+    const [text, setText] = useState<string>();
+    const ref = useRef<HTMLInputElement>(null);
 
+    useEffect(() => {
+        const chatId = props.chat_id;
+        pusherClient.subscribe(String(chatId));
+        pusherClient.bind('newMessage', ()=>{});
+        return () => {
+            pusherClient.unsubscribe("newMessage");
+        };
+    }, [messages]);
 
-export default function Chat_UI(props:{chat_id:Number | undefined, chat_name:string | undefined, user_id:Number})
-{
-
-    const [messages, setMessages] = useState<message[]>([])
-    const [text, setText] = useState<string>()
-
-    useEffect(()=>{
-            if(props.chat_id !== 0)
-            {
-            const chatId = props.chat_id
-            const authorId = props.chat_id
-            if(messages.length === 0)
-            {
-          fetch('/api/messages', {method: 'POST',
-         body: JSON.stringify({ authorId, chatId})})
-         .then(response => response.json())
-         .then(response => {setMessages(response.answer)})
+    useEffect(() => {
+        if (props.chat_id !== 0) {
+            const chatId = props.chat_id;
+            const authorId = props.chat_id;
+            if (messages.length === 0) {
+                fetch('/api/messages', { method: 'POST', body: JSON.stringify({ authorId, chatId }) })
+                    .then(response => response.json())
+                    .then(response => { setMessages(response.answer); })
+                    .then(() => scrollToEnd());
             }
-        
-        pusherClient.subscribe(String(props.chat_id))
-        pusherClient.bind('newMessage', messageHandler)
-        return()=>{
-            pusherClient.unsubscribe("newMessage")
         }
-            }
-        
-        },[props.chat_id])
+    }, [props.chat_id]);
 
-    const messageHandler = (text:string)=>{
-        setMessages(prevLoaded => [
-            ...prevLoaded,
-            { text: text, date: Date.now().toString(), sender:String(props.user_id), user_list:String(props.chat_id)},
-          ]);
-        }
 
-        async function newMessage()
-        {
-            const chatId = props.chat_id
-            const sender = props.user_id
-            fetch('/api/newmessage', {
-                method: 'POST',
-                body: JSON.stringify({text, chatId, sender})
-              })
-                .then(response => response.json())
+    async function newMessage(text:string) {
+        const chatId = props.chat_id;
+        const sender = props.user_id;
+        fetch('/api/newmessage', {
+            method: 'POST',
+            body: JSON.stringify({ text, chatId, sender })
+        })
+        setMessages(prevMessages => {
+            return [
+                ...prevMessages,
+                { text: text, date: Date.now().toString(), sender: String(props.user_id), user_list: String(props.chat_id) },
+            ];
+        });
+    }
 
-        }
+    const scrollToEnd = () => {
+        ref.current?.scrollIntoView({ behavior: "smooth" });
+    }
 
 
     return(
@@ -76,10 +74,11 @@ export default function Chat_UI(props:{chat_id:Number | undefined, chat_name:str
                     )
                 }) : <p className="self-center">Loading Chit-Chat...</p>
             }
+                    <div ref={ref}></div>
         </div>
         <div className="mb-4 flex gap-3 justify-center h-[100px] w-full ">
             <textarea value={text} onChange={(e)=>{setText(e.currentTarget.value)}} className="p-3 rounded-lg outline-none flex w-[80%] resize-none bg-white"/>
-            <button onClick={()=>newMessage()} className="shadow-md self-center p-3 rounded-e bg-white">Chat</button>
+            <button onClick={()=>newMessage(String(text))} className="shadow-md self-center p-3 rounded-e bg-white">Chat</button>
         </div>
         </main>
     )
