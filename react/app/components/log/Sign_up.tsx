@@ -30,7 +30,9 @@ export default function SignUp()
                  }
                  else
                  {
-                    signIn('')
+                    signIn('',{
+                callbackUrl: `${window.location.origin}/sign-in`
+                 })
         }
             }
     }

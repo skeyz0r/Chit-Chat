@@ -25,7 +25,9 @@ async function submit(e:React.MouseEvent<HTMLButtonElement>)
              }
              else
              {
-                signIn('')
+                signIn('',{
+                    callbackUrl: `${window.location.origin}/sign-in`
+                })
     }
 }
     catch(error)
