@@ -38,27 +38,39 @@ export default function Chat_UI(props: { chat_id: Number | undefined, chat_name:
     }, [props.chat_id]);
 
     const messageHandler = (text: string) => {
-        setMessages(prevMessages => {
-            return [
-                ...prevMessages,
-                { text: text, date: Date.now().toString(), sender: String(props.user_id), user_list: String(props.chat_id) },
-            ];
-        });
+        
     };
 
     async function newMessage() {
         const chatId = props.chat_id;
         const sender = props.user_id;
-        fetch('/api/newmessage', {
-            method: 'POST',
-            body: JSON.stringify({ text, chatId, sender })
-        })
-            .then(response => response.json());
+        
+        if (text && text.trim() !== '') {
+            fetch('/api/newmessage', {
+                method: 'POST',
+                body: JSON.stringify({ text, chatId, sender })
+            })
+            .then(response => response.json())
+            .then(response => {
+                setMessages(prevMessages => {
+                    return [
+                        ...prevMessages,
+                        { text: text, date: Date.now().toString(), sender: String(response.answer), user_list: String(props.chat_id) },
+                    ];
+                });
+                setText(''); // Clear the text input after sending the message
+            })
+            .catch(error => console.error('Error sending message:', error)); // Add a catch block to handle any errors
+        }
+        else {
+            console.error('Empty message. Please enter a valid message.');
+        }
     }
+        
 
-    const scrollToEnd = () => {
-        ref.current?.scrollIntoView({ behavior: "smooth" });
-    }
+        const scrollToEnd = () => {
+            ref.current?.scrollIntoView({ behavior: "smooth" });
+        }
 
 
     return(
