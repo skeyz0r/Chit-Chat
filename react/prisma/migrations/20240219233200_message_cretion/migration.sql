@@ -29,7 +29,7 @@ CREATE TABLE "message" (
     "chat_id" INTEGER NOT NULL,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "sender" INTEGER NOT NULL,
-    "user_list" INTEGER NOT NULL,
+    "user_list" TEXT[],
 
     CONSTRAINT "message_pkey" PRIMARY KEY ("id")
 );
@@ -45,6 +45,3 @@ ALTER TABLE "chat" ADD CONSTRAINT "chat_authorId_fkey" FOREIGN KEY ("authorId") 
 
 -- AddForeignKey
 ALTER TABLE "message" ADD CONSTRAINT "message_chat_id_fkey" FOREIGN KEY ("chat_id") REFERENCES "chat"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "message" ADD CONSTRAINT "message_user_list_fkey" FOREIGN KEY ("user_list") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

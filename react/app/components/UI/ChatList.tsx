@@ -36,8 +36,11 @@ export default function ChatList(props: {setChat:any, id: Number }) {
             {
       chat_list?.map((data, key)=>{
         return(
-            <div onClick={()=>{props.setChat(data.id)}} className="p-4 border shadow-md bg-white
-             flex justify-center items-center" key={key}>{data.name}</div>
+            <div onClick={()=>{props.setChat({id: data.id, name:data.name})}} 
+            className="p-4 border shadow-md bg-white
+             flex justify-center items-center" key={key}>
+                <p>{data.name}</p>
+                </div>
         )
       })
     }

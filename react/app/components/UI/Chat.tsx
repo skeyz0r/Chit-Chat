@@ -1,49 +1,86 @@
 'use client'
 import { useState, useEffect } from "react"
+import { pusherClient } from "../pusher"
 
 interface message {
     text:string,
     date:string,
-    sender:string
+    sender:string,
+    user_list:any
 }
 
-export default function Chat_UI(props:{chat_id:Number | undefined, user_id:Number})
+
+
+export default function Chat_UI(props:{chat_id:Number | undefined, chat_name:string | undefined, user_id:Number})
 {
 
     const [messages, setMessages] = useState<message[]>([])
+    const [text, setText] = useState<string>()
 
     useEffect(()=>{
-        if(props.chat_id !== undefined)
+            if(props.chat_id !== 0)
+            {
+            const chatId = props.chat_id
+            const authorId = props.chat_id
+            if(messages.length === 0)
+            {
+          fetch('/api/messages', {method: 'POST',
+         body: JSON.stringify({ authorId, chatId})})
+         .then(response => response.json())
+         .then(response => {setMessages(response.answer)})
+            }
+        
+        pusherClient.subscribe(String(props.chat_id))
+        pusherClient.bind('newMessage', messageHandler)
+        return()=>{
+            pusherClient.unsubscribe("newMessage")
+        }
+            }
+        
+        },[props.chat_id])
+
+    const messageHandler = (text:string)=>{
+        setMessages(prevLoaded => [
+            ...prevLoaded,
+            { text: text, date: Date.now().toString(), sender:String(props.user_id), user_list:String(props.chat_id)},
+          ]);
+        }
+
+        async function newMessage()
         {
-        const id = props.chat_id
-        fetch('/api/messages', { method: 'POST', body: JSON.stringify({id}) })
-        .then(response => response.json())
-        .then(response => {
-            setMessages(response.answer.map((prevMessage:message) => ({sender:prevMessage.sender, text: prevMessage.text, id: prevMessage.date })));
-        })
-    }
-    },[props.chat_id])
+            const chatId = props.chat_id
+            const sender = props.user_id
+            fetch('/api/newmessage', {
+                method: 'POST',
+                body: JSON.stringify({text, chatId, sender})
+              })
+                .then(response => response.json())
+
+        }
 
 
     return(
        <main  className="flex flex-col h-full w-[80%] bg-gray-200">
-                    <div className={`${props.chat_id === undefined ? 'hidden' : 'visible'} h-[10%] bg-gray-300 w-full`}>
-
-</div>
-        <div className="w-full flex flex-col h-[90%] overflow-y-scroll">
+                    <div className={`${props.chat_id === undefined ? 'hidden' : 'visible'} flex justify-center flex-col items-center 
+                    text-2xl h-[10%] bg-gray-400 w-full`}>
+                            <p className="text-white">{props.chat_name}</p>
+                    </div>
+        <div className={`${messages.length > 0 ? 'justify-start' : 'justify-center'} py-12 w-full flex flex-col h-[90%] overflow-y-scroll`}>
             {
+                messages.length > 0 ?
                 messages.map((data,key)=>{
                     return(
-                        <div className={`${Number(data.sender) === props.user_id ? 'self-end' : 'self-start'} p-4 rounded`} key={key}>{data.text}
+                        <div className={`${Number(data.sender) === props.user_id ? 'self-end' : 'self-start'}  p-4 rounded`} key={key}>{data.text}
                         <p>{data.sender}</p>
                         </div>
                     )
-                })
+                }) : <p className="self-center">Loading Chit-Chat...</p>
             }
         </div>
-            <div className="h-[12%] rounded-t-md w-[98%] self-center bg-white">
-                <p>{String(props.chat_id)}</p>
-            </div>
+        <div className="mb-4 flex gap-3 justify-center h-[100px] w-full ">
+            <textarea value={text} onChange={(e)=>{setText(e.currentTarget.value)}} className="p-3 rounded-lg outline-none flex w-[80%] resize-none bg-white"/>
+            <button onClick={()=>newMessage()} className="shadow-md self-center p-3 rounded-e bg-white">Chat</button>
+        </div>
         </main>
     )
 }

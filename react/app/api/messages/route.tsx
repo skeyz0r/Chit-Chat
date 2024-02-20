@@ -8,25 +8,17 @@ export  async function POST(req:Request)
         const body = await req.json()
         const {id} = body;
 
-
         const chat = await db.message.findMany({
-          where: {
-            chat_id: id
-        },
-        select: {
-            text: true,
-            date: true,
-            sender: true,
-            user: {
-                select: {
-                    // Add the fields you want to select from the user table
-                    userId: true,
-                    username: true,
-                    // Include other fields as needed
-                }
+            where: {
+                chat_id: id
+            },
+            select: {
+                text: true,
+                date: true,
+                sender: true,
+                user_list:true
             }
-        }
-          })
+        });
 
 
             return NextResponse.json({answer:chat, message:"Message found!"}, {status:202})
