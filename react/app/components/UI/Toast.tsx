@@ -3,7 +3,7 @@ import { IoCloseCircle } from "react-icons/io5";
 import { FaCircleCheck } from "react-icons/fa6";
 import { useState, useEffect } from "react";
 
-export default function props(props:{Toast:any, state:string, error:boolean, value:string})
+export default function Toast(props:{Toast:any, state:string, error:boolean, value:string})
 {
 
     const [toast, setToast] = useState({state:props.state, error:props.error, value:props.value})
