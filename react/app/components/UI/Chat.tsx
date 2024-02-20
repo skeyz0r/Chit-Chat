@@ -44,33 +44,16 @@ export default function Chat_UI(props: { chat_id: Number | undefined, chat_name:
     async function newMessage() {
         const chatId = props.chat_id;
         const sender = props.user_id;
-        
-        if (text && text.trim() !== '') {
-            fetch('/api/newmessage', {
-                method: 'POST',
-                body: JSON.stringify({ text, chatId, sender })
-            })
-            .then(response => response.json())
-            .then(response => {
-                setMessages(prevMessages => {
-                    return [
-                        ...prevMessages,
-                        { text: text, date: Date.now().toString(), sender: String(response.answer), user_list: String(props.chat_id) },
-                    ];
-                });
-                setText(''); // Clear the text input after sending the message
-            })
-            .catch(error => console.error('Error sending message:', error)); // Add a catch block to handle any errors
-        }
-        else {
-            console.error('Empty message. Please enter a valid message.');
-        }
+        fetch('/api/newmessage', {
+            method: 'POST',
+            body: JSON.stringify({ text, chatId, sender })
+        })
+            .then(response => response.json());
     }
-        
 
-        const scrollToEnd = () => {
-            ref.current?.scrollIntoView({ behavior: "smooth" });
-        }
+    const scrollToEnd = () => {
+        ref.current?.scrollIntoView({ behavior: "smooth" });
+    }
 
 
     return(
