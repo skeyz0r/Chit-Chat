@@ -18,7 +18,7 @@ export default function Toast(props:{Toast:any, state:string, error:boolean, val
        props.Toast({state:'hidden',error:false,value:''})
       }, 3000);
     }
-    }, [props.state])
+    }, [props])
 
     return(
         <div className={`${toast.state} cursor-default gap-3 mt-8 rounded flex justify-center items-center 

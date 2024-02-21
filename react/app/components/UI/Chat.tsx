@@ -67,6 +67,7 @@ export default function Chat_UI(props:{chat_id:Number | undefined, chat_name:str
 
         const scrollToEnd = () => {
             ref.current?.scrollIntoView({behavior: "smooth"})
+            console.log(ref)
         }
 
 

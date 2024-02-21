@@ -23,7 +23,7 @@ export default function LeftBar(props:{setToast:any, setChat:any, setNewChat:any
               setFound(response.answer);
             });
         }
-      }, [usr]);
+      }, [usr, finder]);
 
       function onChange(e: React.ChangeEvent<HTMLInputElement>) {
         findUser(e.target.value);
