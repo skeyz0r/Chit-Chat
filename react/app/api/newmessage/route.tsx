@@ -28,7 +28,7 @@ export  async function POST(req:Request)
 
 
 
-        await pusherServer.trigger(String(chatId),'newMessage', text)
+        await pusherServer.trigger(String(chatId),'newMessage', {text, sender})
 
         return NextResponse.json({answer:sender, message:"Message sent!"}, {status:200})
 

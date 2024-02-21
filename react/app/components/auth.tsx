@@ -31,6 +31,7 @@ export const authOptions: NextAuthOptions = {
                     return null;
                 }
               
+
                 const existingUser = await db.user.findUnique({
                     where:{
                         username:credentials?.username
@@ -48,6 +49,7 @@ export const authOptions: NextAuthOptions = {
                     
                     return null;
                 }
+
 
                 return(
                     {

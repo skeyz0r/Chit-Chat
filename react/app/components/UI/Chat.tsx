@@ -32,28 +32,23 @@ export default function Chat_UI(props:{chat_id:Number | undefined, chat_name:str
          .then(()=>scrollToEnd())
             }
         
-        pusherClient.subscribe(String(chatId))
-        pusherClient.bind('newMessage', messageHandler)
-        return()=>{
-            pusherClient.unsubscribe("newMessage")
-        }
+    
+            const channel = pusherClient.subscribe(String(chatId));
+
+            channel.bind("newMessage", function (data:any) {
+                setMessages(prevLoaded => [
+                    ...prevLoaded,
+                    { text: data.text, date: Date.now().toString(), sender:data.sender, user_list:String(props.chat_id)},
+                  ])})
+                
+            return () => {
+              pusherClient.unsubscribe("chat");
+            };
             }
-        
         },[props.chat_id])
 
 
-    const messageHandler = (text:string)=>{
-        fetch('/api/userId', {
-            method: 'GET',
-          })
-            .then(response => response.json()) 
-                .then(response => setMessages(prevLoaded => [
-            ...prevLoaded,
-            { text: text, date: Date.now().toString(), sender:response.answer, user_list:String(props.chat_id)},
-          ]));
-        }
-
-        async function newMessage()
+        function newMessage()
         {
             const chatId = props.chat_id
             const sender = props.user_id
@@ -61,13 +56,10 @@ export default function Chat_UI(props:{chat_id:Number | undefined, chat_name:str
                 method: 'POST',
                 body: JSON.stringify({text, chatId, sender})
               })
-                .then(response => response.json())
-
         }
 
         const scrollToEnd = () => {
             ref.current?.scrollIntoView({behavior: "smooth"})
-            console.log(ref)
         }
 
 
