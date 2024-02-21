@@ -1,59 +1,71 @@
-
-import { useState, useEffect, useRef } from "react";
-import { pusherClient } from "../pusher";
+'use client'
+import { useState, useEffect, useRef } from "react"
+import { pusherClient } from "../pusher"
 
 interface message {
-    text: string;
-    date: string;
-    sender: string;
-    user_list: any;
+    text:string,
+    date:string,
+    sender:string,
+    user_list:any
 }
 
-export default function Chat_UI(props: { chat_id: Number | undefined, chat_name: string | undefined, user_id: Number }) {
-    const [messages, setMessages] = useState<message[]>([]);
-    const [text, setText] = useState<string>();
-    const ref = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        console.log(messages); // Initial state (empty array)
-    }, [messages]);
 
-    useEffect(() => {
-        if (props.chat_id !== 0) {
-            const chatId = props.chat_id;
-            const authorId = props.chat_id;
-            if (messages.length === 0) {
-                fetch('/api/messages', { method: 'POST', body: JSON.stringify({ authorId, chatId }) })
-                    .then(response => response.json())
-                    .then(response => { setMessages(response.answer); })
-                    .then(() => scrollToEnd());
+export default function Chat_UI(props:{chat_id:Number | undefined, chat_name:string | undefined, user_id:Number})
+{
+
+    const [messages, setMessages] = useState<message[]>([])
+    const [text, setText] = useState<string>()
+    const ref = useRef<HTMLInputElement>(null)
+
+    useEffect(()=>{
+            if(props.chat_id !== 0)
+            {
+            const chatId = props.chat_id
+            const authorId = props.chat_id
+            if(messages.length === 0)
+            {
+          fetch('/api/messages', {method: 'POST',
+         body: JSON.stringify({ authorId, chatId})})
+         .then(response => response.json())
+         .then(response => {setMessages(response.answer)})
+         .then(()=>scrollToEnd())
             }
-
-            pusherClient.subscribe(String(chatId));
-            pusherClient.bind('newMessage', messageHandler);
-            return () => {
-                pusherClient.unsubscribe("newMessage");
-            };
-        }
-    }, [props.chat_id]);
-
-    const messageHandler = (text: string) => {
         
-    };
+        pusherClient.subscribe(String(chatId))
+        pusherClient.bind('newMessage', messageHandler)
+        return()=>{
+            pusherClient.unsubscribe("newMessage")
+        }
+            }
+        
+        },[props.chat_id])
 
-    async function newMessage() {
-        const chatId = props.chat_id;
-        const sender = props.user_id;
-        fetch('/api/newmessage', {
-            method: 'POST',
-            body: JSON.stringify({ text, chatId, sender })
-        })
-            .then(response => response.json());
-    }
+        const messageHandler = (text: string) => {
+           console.log(text)
+        };
 
-    const scrollToEnd = () => {
-        ref.current?.scrollIntoView({ behavior: "smooth" });
-    }
+        async function newMessage()
+        {
+            const chatId = props.chat_id
+            const sender = props.user_id
+            fetch('/api/newmessage', {
+                method: 'POST',
+                body: JSON.stringify({text, chatId, sender})
+              })
+                .then(response => response.json())
+                .then(response =>  setMessages(prevMessages => {
+                    return [
+                        ...prevMessages,
+                        { text: text!, date: Date.now().toString(), sender: response.answer, user_list: String(props.chat_id) },
+                    ];
+                }))
+
+        }
+
+        const scrollToEnd = () => {
+            ref.current?.scrollIntoView({behavior: "smooth"})
+        }
 
 
     return(
