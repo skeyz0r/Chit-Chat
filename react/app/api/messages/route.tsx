@@ -16,12 +16,16 @@ export  async function POST(req:Request)
                 text: true,
                 date: true,
                 sender: true,
-                user_list:true
+                author: true
             }
         });
-
-
+        
+        if(chat.length > 0)
+        {
             return NextResponse.json({answer:chat, message:"Message found!"}, {status:202})
+        }
+        return NextResponse.json({answer:chat, message:"No Message found!"}, {status:404})
+
             }
 
     

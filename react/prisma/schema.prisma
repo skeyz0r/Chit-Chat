@@ -38,7 +38,8 @@ model message{
   chat chat @relation(fields: [chat_id], references: [id])
   chat_id Int
   date DateTime @default(now())
+  author String
   sender Int
-  user_list Int[] 
+  viewed Int[] 
 }
 

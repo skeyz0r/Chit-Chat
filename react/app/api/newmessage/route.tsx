@@ -10,25 +10,28 @@ export  async function POST(req:Request)
         const {text, chatId, sender} = body;
 
 
-  const users = await db.chat.findMany({
-    where: { id: chatId },
-    select: {
-        user_list: true
-    }
-});
+    const username = await db.user.findFirst({
+        where:{
+            id:sender
+        },
+        select:{
+            username:true
+        }
+    })
 
     await db.message.create({
         data: {
             text: text,
             chat_id: chatId,
             sender: sender,
-            user_list: users[0].user_list
+            author: String(username?.username)     
         }
     });
 
 
+   const usr =  username?.username
 
-        await pusherServer.trigger(String(chatId),'newMessage', {text, sender})
+        await pusherServer.trigger(String(chatId),'newMessage', {text, usr})
 
         return NextResponse.json({answer:sender, message:"Message sent!"}, {status:200})
 
