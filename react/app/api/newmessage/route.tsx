@@ -7,7 +7,7 @@ export  async function POST(req:Request)
 {
     try{
         const body = await req.json()
-        const {text, chatId, sender} = body;
+        const {msgText, chatId, sender} = body;
 
 
   const users = await db.chat.findMany({
@@ -19,7 +19,7 @@ export  async function POST(req:Request)
 
     await db.message.create({
         data: {
-            text: text,
+            text: msgText,
             chat_id: chatId,
             sender: sender,
             user_list: users[0].user_list
@@ -28,7 +28,7 @@ export  async function POST(req:Request)
 
 
 
-        await pusherServer.trigger(String(chatId),'newMessage', text)
+        await pusherServer.trigger(String(chatId),'newMessage', msgText)
 
         return NextResponse.json({answer:sender, message:"Message sent!"}, {status:200})
 

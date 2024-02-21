@@ -15,7 +15,7 @@ export default function Chat_UI(props:{chat_id:Number | undefined, chat_name:str
 {
 
     const [messages, setMessages] = useState<message[]>([])
-    const [text, setText] = useState<string>()
+    const [msgText, setText] = useState<string>()
     const ref = useRef<HTMLInputElement>(null)
 
     useEffect(()=>{
@@ -41,27 +41,28 @@ export default function Chat_UI(props:{chat_id:Number | undefined, chat_name:str
         
         },[props.chat_id])
 
-        const messageHandler = (text: string) => {
-           console.log(text)
+        const messageHandler = (text: string | undefined) => {
+            console.log(text)
+            if(text)
+            {
+            setMessages(prevMessages => [
+                ...prevMessages,
+                { text: text, date: Date.now().toString(), sender: String(props.user_id), user_list: String(props.chat_id) },
+            ]);
+            }
+            else
+            {
+                const chatId = props.chat_id
+                const sender = props.user_id
+                fetch('/api/newmessage', {
+                    method: 'POST',
+                    body: JSON.stringify({msgText, chatId, sender})
+                  })
+                    .then(response => response.json())
+    
+            }
         };
 
-        async function newMessage()
-        {
-            const chatId = props.chat_id
-            const sender = props.user_id
-            fetch('/api/newmessage', {
-                method: 'POST',
-                body: JSON.stringify({text, chatId, sender})
-              })
-                .then(response => response.json())
-                .then(response =>  setMessages(prevMessages => {
-                    return [
-                        ...prevMessages,
-                        { text: text!, date: Date.now().toString(), sender: response.answer, user_list: String(props.chat_id) },
-                    ];
-                }))
-
-        }
 
         const scrollToEnd = () => {
             ref.current?.scrollIntoView({behavior: "smooth"})
@@ -88,8 +89,8 @@ export default function Chat_UI(props:{chat_id:Number | undefined, chat_name:str
                     <div ref={ref}></div>
         </div>
         <div className="mb-4 flex gap-3 justify-center h-[100px] w-full ">
-            <textarea value={text} onChange={(e)=>{setText(e.currentTarget.value)}} className="p-3 rounded-lg outline-none flex w-[80%] resize-none bg-white"/>
-            <button onClick={()=>newMessage()} className="shadow-md self-center p-3 rounded-e bg-white">Chat</button>
+            <textarea value={msgText} onChange={(e)=>{setText(e.currentTarget.value)}} className="p-3 rounded-lg outline-none flex w-[80%] resize-none bg-white"/>
+            <button onClick={()=>messageHandler(undefined)} className="shadow-md self-center p-3 rounded-e bg-white">Chat</button>
         </div>
         </main>
     )
