@@ -17,14 +17,13 @@ interface chat{
 }
 
 
-export default function FrontPage(props:{session:any, userId:Number})
+export default function FrontPage(props:{session:any})
 {
 
     const [chat, setChat] = useState<chat>({id:undefined, name:undefined})
     const [newChat, setNewChat] = useState(false)
     const [toast, setToast] = useState<ToastInt>({value:"",state:'hidden', error:false})
 
-console.log("The",props.userId)
 
     return(
         <>
