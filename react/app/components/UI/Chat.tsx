@@ -43,11 +43,14 @@ export default function Chat_UI(props:{chat_id:Number | undefined, chat_name:str
 
 
     const messageHandler = (text:string)=>{
-        console.log("the", props.user_id)
-        setMessages(prevLoaded => [
+        fetch('/api/userId', {
+            method: 'GET',
+          })
+            .then(response => response.json()) 
+                .then(response => setMessages(prevLoaded => [
             ...prevLoaded,
-            { text: text, date: Date.now().toString(), sender:String(props.user_id), user_list:String(props.chat_id)},
-          ]);
+            { text: text, date: Date.now().toString(), sender:response.answer, user_list:String(props.chat_id)},
+          ]));
         }
 
         async function newMessage()

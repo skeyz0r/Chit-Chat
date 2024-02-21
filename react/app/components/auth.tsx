@@ -3,6 +3,7 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import db from "./prisma";
 import { compare } from "bcrypt";
+import { cookies } from "next/headers";
 
 export const authOptions: NextAuthOptions = {
     adapter:PrismaAdapter(db),
@@ -31,7 +32,6 @@ export const authOptions: NextAuthOptions = {
                     return null;
                 }
               
-
                 const existingUser = await db.user.findUnique({
                     where:{
                         username:credentials?.username
@@ -49,7 +49,18 @@ export const authOptions: NextAuthOptions = {
                     
                     return null;
                 }
-
+                else
+                {
+                    const data = await db.user.findFirst({
+                        where: {
+                            username:credentials?.username
+                        },
+                        select:{
+                            id:true
+                        }    
+                    })
+                    cookies().set('id', String(data?.id))
+                }
 
                 return(
                     {
