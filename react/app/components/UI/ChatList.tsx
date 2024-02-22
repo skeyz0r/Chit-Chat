@@ -9,7 +9,7 @@ interface Chat {
 
 
 
-export default function ChatList(props:{chat:any, setMessages:any, chatList:any, setList:any, setChat:any, id: Number }) {
+export default function ChatList(props:{newChat:any, chat:any, setMessages:any, chatList:any, setList:any, setChat:any, id: Number }) {
 
 
     useEffect(() => {
@@ -24,9 +24,8 @@ export default function ChatList(props:{chat:any, setMessages:any, chatList:any,
                 props.setList(response.answer.map((prevChat:Chat) => ({ name: prevChat.name, id: prevChat.id })));
             }
         }
-    
         getChats();
-    }, [props.chatList]);
+    }, [props.newChat]);
 
     function chatnew(data:any)
     {

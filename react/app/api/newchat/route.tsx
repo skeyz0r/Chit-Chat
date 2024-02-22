@@ -46,7 +46,8 @@ export  async function POST(req:Request)
                         user_list: list
                     },
                     select:{
-                        id:true
+                        id:true,
+                        name:true
                     }
                 })
 

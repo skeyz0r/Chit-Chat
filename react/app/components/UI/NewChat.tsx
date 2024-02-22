@@ -16,7 +16,7 @@ interface newChat{
     name:string
 }
 
-export default function NewChat(props:{chat_list:any, setToast:any, setList:any, authorId:Number})
+export default function NewChat(props:{setNew:any, setChat:any, chat_list:any, setToast:any, setList:any, authorId:Number})
 {
 
     const [friend, setFriend] = useState<string[]>(['loading...'])
@@ -70,6 +70,9 @@ async function createChat() {
     })
     if(data.ok)
     {
+        const response = await data.json()
+        props.setChat(response.chat)
+        props.setNew(false)
         props.setToast({
             state: 'visible',
             error: false,
