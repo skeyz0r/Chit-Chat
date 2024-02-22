@@ -1,28 +1,37 @@
 'use client'
 import { useState } from "react"
+import { Quicksand, Readex_Pro } from "next/font/google";
+
+const sand = Quicksand({
+    weight: ["400", "700"],
+    subsets: ["latin"]
+})
+
+const readex = Readex_Pro({
+    weight: "400",
+    subsets: ["latin"]
+})
 
 export default function Message(props:{sender:boolean, text:string, username:string, seen:string[]})
 {
 
     const [seen, setSeen] = useState(false)
 
-    console.log(props.seen, props.text)
 
     return(
-        <div className={`${props.sender ? 'self-end' : 'self-start'} px-4`}>
-                        <p className="text-sm">{props.username}</p>
-            <p className="p-3 rounded-md text-center bg-white border text-black">{props.text}</p>
-            { props.seen[0] === 'viewed' ? <span className="p-3 text-sm">{props.seen[0]}</span> : props.seen[0] === 'no one' ?
-            <span className="p-3 text-sm">{props.seen[0]}</span> : props.seen[0] === 'now seen' ? <span className="p-3 text-sm">{props.seen[0]}</span>  :
-            props.seen[0] === 'seen' ? <span className="p-3 text-sm">{props.seen[0]}</span>  :
+        <div className={`${props.sender ? 'self-end' : 'self-start'} my-4 px-4`}>
+                        <p className={`${readex.className} text-sm`}>{props.username}</p>
+            <p className={`${sand.className} p-3 rounded-md text-center bg-white border text-black`}>{props.text}</p>
+            { props.seen[0] === 'viewed' || props.seen[0] === 'no one' || props.seen[0] === 'now seen' || props.seen[0] === 'seen'? 
+             <span className={`${sand.className} text-sm`}>{props.seen[0]}</span>  : 
                 <div>
-                            <span onClick={()=>setSeen(!seen)} className="p-3 text-sm underline cursor-pointer">Seen by</span>
+                            <span onClick={()=>setSeen(!seen)} className={`${sand.className} text-sm underline cursor-pointer`}>Seen by</span>
                     <div>
-                            <div className={`${seen ? ' opacity-100' : ' opacity-0'} flex gap-4 p-3 border rounded`}>
+                            <div className={`${seen ? ' visible' : 'hidden'} flex gap-4  border rounded`}>
                         {
                              props.seen.map((data,key)=>{
                                 return(
-                                    <p key={key} className="text-sm">{data}</p>
+                                    <p key={key} className=" font-sans text-sm">{data}</p>
                              )})
                         }
                         </div>
