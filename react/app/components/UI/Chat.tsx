@@ -13,13 +13,11 @@ export default function Chat_UI(props: {messages:any, setMessages:any, chat_id: 
     const [text, setText] = useState<string>("");
     const ref = useRef<HTMLInputElement>(null);
     const [newMsg, setNew] = useState<boolean>(false);
-    const [loaded, setLoaded] = useState(false)
 
     useEffect(() => {
-        const id = props.chat_id;       
-
-        async function getMsgs() {     
-         
+        async function getMsgs() {            
+            if (props.chat_id && props.messages.length === 0) {
+                const id = props.chat_id;
                 const msgs = await fetch('/api/messages', { method: 'POST', body: JSON.stringify({ id }) });
     
                 if (msgs.ok) {
@@ -27,33 +25,25 @@ export default function Chat_UI(props: {messages:any, setMessages:any, chat_id: 
                     props.setMessages(response.answer);
                     scrollToEnd();
                     setNew(false)
-                } 
-                else
-                 {
+                } else {
                     setNew(true);
-                 }
-                 setLoaded(true)
+                }
+        
+                const channel = pusherClient.subscribe(String(id));
+                channel.bind("newMessage", function (data: any) {
+                    props.setMessages((prevLoaded: Message[]) => [
+                        ...prevLoaded,
+                        { text: data.text, date: Date.now().toString(), author: data.usr, viewed: [] },
+                    ]);
+                });
 
+                return () => {
+                    pusherClient.unsubscribe(String(id));
+                };
+            }
         }
-        if(!loaded)
-        {
         getMsgs();
-        }
-        console.log(loaded)
-
-        const channel = pusherClient.subscribe(String(id));
-        channel.bind("newMessage", function (data: any) {
-            props.setMessages((prevLoaded: Message[]) => [
-                ...prevLoaded,
-                { text: data.text, date: Date.now().toString(), author: data.usr, viewed: [] },
-            ]);
-        });
-
-        return () => {
-            pusherClient.unsubscribe(String(id));
-        };
-
- 
+        console.log(props.chat_id)
     }, [props.messages]);
 
 
@@ -88,7 +78,7 @@ export default function Chat_UI(props: {messages:any, setMessages:any, chat_id: 
             <div className={`${props.messages.length > 0 ? 'justify-start' : 'justify-center'} py-12 w-full flex flex-col h-[90%] overflow-y-scroll`}>
                 {newMsg ? <p className="self-center">New Chit-Chat, say Hi!</p> :
                     props.messages.length > 0 ?
-                        props.messages.map((data:Message, key:Key) => {console.log(props.messages);(
+                        props.messages.map((data:Message, key:Key) => (
                             <Message
                                 seen={data.author === props.username && data.viewed.length === 0  ? ['no one'] : data.author === props.username ? data.viewed :
                                  data.viewed.includes(props.username) ? ['seen'] : viewMsg()
@@ -98,7 +88,7 @@ export default function Chat_UI(props: {messages:any, setMessages:any, chat_id: 
                                 text={data.text}
                                 key={key}
                             />
-                        )}) : <p className="self-center">Loading Chit-Chat...</p>}
+                        )) : <p className="self-center">Loading Chit-Chat...</p>}
                 <div ref={ref}></div>
             </div>
             <div className="mb-4 flex gap-3 justify-center h-[100px] w-full">
