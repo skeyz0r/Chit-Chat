@@ -4,6 +4,7 @@ import Message from "./Message";
 import { Comfortaa } from "next/font/google";
 
 interface Message {
+    id:string,
     text: string;
     date: string;
     author: string;
@@ -86,7 +87,7 @@ export default function Chat_UI(props: {messages:any, setMessages:any, chat_id: 
                 {newMsg ? <p className="self-center">New Chit-Chat, say Hi!</p> :
                     props.messages.length > 0 ?
                         props.messages.map((data:Message, key:Key) => (
-                            <Message
+                            <Message chatId={String(props.chat_id)}
                                 seen={data.author === props.username && data.viewed.length === 0  ? ['no one'] : data.author === props.username ? data.viewed :
                                  data.viewed.includes(props.username) ? ['seen'] : viewMsg()
                             }

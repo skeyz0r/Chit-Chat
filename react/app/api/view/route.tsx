@@ -1,4 +1,5 @@
 import db from "@/app/components/prisma";
+import { pusherServer } from "@/app/components/pusher";
 import { NextResponse } from "next/server";
 
 export  async function POST(req:Request)
@@ -23,6 +24,9 @@ export  async function POST(req:Request)
             }
         }
         });
+
+        await pusherServer.trigger(String(id),'view', {username})
+
 
         return NextResponse.json({message:"Chat viewed!"}, {status:202})
 
