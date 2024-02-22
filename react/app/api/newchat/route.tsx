@@ -11,7 +11,7 @@ export  async function POST(req:Request)
         const {author, name} = chatVal;
         let list:number[] = [author]
 
-
+        
         const existingChat =  await db.chat.findMany({
             where:{name:name, authorId:author}
         })
@@ -38,18 +38,21 @@ export  async function POST(req:Request)
                     list.push(Number(data?.id))
                 }
 
-                await db.chat.create({
-                        data:{
-                            authorId:author,
-                            name:name,
-                            user_list: list
-                        }
+                let chat;
+                 chat = await db.chat.create({
+                    data:{
+                        authorId:author,
+                        name:name,
+                        user_list: list
+                    },
+                    select:{
+                        id:true
+                    }
                 })
-            }
 
-            return NextResponse.json({answer:name, message:"Chat created!"}, {status:200})
+            return NextResponse.json({chat, message:"Chat created!"}, {status:200})
         
-    }
+    }}
     }
 catch(error)
 {

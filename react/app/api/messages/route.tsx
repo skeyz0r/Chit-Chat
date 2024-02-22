@@ -10,13 +10,15 @@ export  async function POST(req:Request)
 
         const chat = await db.message.findMany({
             where: {
-                chat_id: id
+                chat_id: Number(id)
             },
             select: {
+                id:true,
                 text: true,
                 date: true,
                 sender: true,
-                author: true
+                author: true,
+                viewed:true
             }
         });
         

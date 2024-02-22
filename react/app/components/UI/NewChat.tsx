@@ -1,11 +1,10 @@
 'use client'
 
-import { useEffect, useState } from "react"
+import { Key, useEffect, useState } from "react"
 import { FaCheck } from "react-icons/fa"
 import { FaSortDown } from "react-icons/fa";
 import { FaSortUp } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { pusherClient } from "../pusher";
 
 interface Chat {
     name: string;
@@ -17,13 +16,12 @@ interface newChat{
     name:string
 }
 
-export default function NewChat(props:{setToast:any, authorId:Number})
+export default function NewChat(props:{chat_list:any, setToast:any, setList:any, authorId:Number})
 {
 
     const [friend, setFriend] = useState<string[]>(['loading...'])
     const [select, setSelect] = useState<string[]>([])
     const [menu, setMenu] = useState('hidden')
-    const [chat_list, setList] = useState<Chat[]>([]);
     const [chatVal, setChatval] = useState<newChat>()
     const path = useRouter()
 
@@ -41,10 +39,6 @@ export default function NewChat(props:{setToast:any, authorId:Number})
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
-            const id = props.authorId;
-            fetch('api/chats', { method: 'POST', body: JSON.stringify({ id }) })
-            .then(response=>response.json())
-            .then(response=>setList(response.answer)) 
         };
         
         fetchData();
@@ -66,15 +60,32 @@ export default function NewChat(props:{setToast:any, authorId:Number})
 }
 
 
-function createChat()
-{
-     fetch('/api/newchat', {method: 'POST',
-    body: JSON.stringify({chatVal,select})
-})
-.then(()=>path.refresh())
-props.setToast({state:'visible', error: false, value:chatVal?.name + " has been created!"})
+async function createChat() {
+    const data = await fetch('/api/newchat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ chatVal: chatVal, select: select })
+    })
+    if(data.ok)
+    {
+        props.setToast({
+            state: 'visible',
+            error: false,
+            value: chatVal?.name + " has been created!"
+        });
+    
+    }
+    else
+    {
+        props.setToast({
+            state: 'visible',
+            error: true,
+            value: chatVal?.name + " ERROR"
+        });
+    }
 }
-
     return(
         <div className="w-[80%] flex flex-col items-center mt-14">
             <h2 className="text-3xl">Create new Chit-Chat</h2>
@@ -116,10 +127,10 @@ props.setToast({state:'visible', error: false, value:chatVal?.name + " has been 
 
                 <div className="flex flex-col gap-4 mt-8">
             {
-            chat_list ?     
-    chat_list.length > 0
+            props.chat_list ?     
+    props.chat_list.length > 0
     ?                
-      chat_list?.map((data, key)=>{
+      props.chat_list?.map((data:Chat, key:Key)=>{
         return(
             <div className="p-4 border shadow-md bg-white
              flex justify-center items-center" key={key}>{data.name}</div>

@@ -40,6 +40,6 @@ model message{
   date DateTime @default(now())
   author String
   sender Int
-  viewed Int[] 
+  viewed String[] @default([])
 }
 

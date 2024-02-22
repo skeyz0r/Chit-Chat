@@ -17,7 +17,6 @@ export  async function POST(req:Request)
               name: true,        
             }
           })
-
           if(chat.length > 0)
           {
             return NextResponse.json({answer:chat, message:"Chat loaded!"}, {status:202})

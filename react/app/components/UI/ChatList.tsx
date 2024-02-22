@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from "react"
+import { useState, useEffect, Key } from "react"
 
 
 interface Chat {
@@ -7,40 +7,50 @@ interface Chat {
     id: string;
 }
 
-export default function ChatList(props: {setChat:any, id: Number }) {
 
-    const [chat_list, setList] = useState<Chat[]>([]);
+interface Message {
+    text: string;
+    date: string;
+    author: string;
+    viewed: string[];
+}
+
+
+export default function ChatList(props:{setMessages:any, chatList:any, setList:any, setChat:any, id: Number }) {
 
 
     useEffect(() => {
-        const id = props.id;
+        async function getChats() {
+            const id = props.id;
+            const data = await fetch('api/chats', { method: 'POST', body: JSON.stringify({ id }) });
     
-        fetch('api/chats', { method: 'POST', body: JSON.stringify({ id }) })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                return response.json();
-            })
-            .then(response => {
-                setList(response.answer.map((prevChat:Chat) => ({ name: prevChat.name, id: prevChat.id })));
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }, [props.id]);
+            if (!data.ok) {
+                console.log("error");
+            } else {
+                const response = await data.json();
+                props.setList(response.answer.map((prevChat:Chat) => ({ name: prevChat.name, id: prevChat.id })));
+            }
+        }
+    
+        getChats();
+    }, [props.chatList]);
 
+    function chatnew(data:any)
+    {
+        props.setChat({id:data.id, name:data.name})
+        props.setMessages([])
+    }
 
     return(
         <div className="flex flex-col gap-4 mt-8">
             {
-      chat_list?.map((data, key)=>{
+      props.chatList.map((data:Chat, key:Key)=>{
         return(
-            <div onClick={()=>{props.setChat({id: data.id, name:data.name})}} 
+            <div onClick={()=>{chatnew(data)}} 
             className="p-4 border shadow-md bg-white
              flex justify-center items-center" key={key}>
                 <p>{data.name}</p>
-                </div>
+            </div>
         )
       })
     }
