@@ -21,9 +21,9 @@ export default function Chat_UI(props: {messages:any, setMessages:any, chat_id: 
     const [newMsg, setNew] = useState<boolean>(false);
 
     useEffect(() => {
-        const id = props.chat_id;
         async function getMsgs() {            
             if (props.chat_id && props.messages.length === 0) {
+                const id = props.chat_id;
                 const msgs = await fetch('/api/messages', { method: 'POST', body: JSON.stringify({ id }) });
     
                 if (msgs.ok) {
@@ -34,18 +34,19 @@ export default function Chat_UI(props: {messages:any, setMessages:any, chat_id: 
                 } else {
                     setNew(true);
                 }
-            }
-            const channel = pusherClient.subscribe(String(id));
-            channel.bind("newMessage", function (data: any) {
-                props.setMessages((prevLoaded: Message[]) => [
-                    ...prevLoaded,
-                    { text: data.text, date: Date.now().toString(), author: data.usr, viewed: [] },
-                ]);
-            });
+        
+                const channel = pusherClient.subscribe(String(id));
+                channel.bind("newMessage", function (data: any) {
+                    props.setMessages((prevLoaded: Message[]) => [
+                        ...prevLoaded,
+                        { text: data.text, date: Date.now().toString(), author: data.usr, viewed: [] },
+                    ]);
+                });
 
-            return () => {
-                pusherClient.unsubscribe(String(id));
-            };
+                return () => {
+                    pusherClient.unsubscribe(String(id));
+                };
+            }
         }
         getMsgs();
     }, [props.messages]);
