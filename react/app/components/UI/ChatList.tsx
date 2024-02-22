@@ -8,15 +8,8 @@ interface Chat {
 }
 
 
-interface Message {
-    text: string;
-    date: string;
-    author: string;
-    viewed: string[];
-}
 
-
-export default function ChatList(props:{setMessages:any, chatList:any, setList:any, setChat:any, id: Number }) {
+export default function ChatList(props:{chat:any, setMessages:any, chatList:any, setList:any, setChat:any, id: Number }) {
 
 
     useEffect(() => {
@@ -37,8 +30,11 @@ export default function ChatList(props:{setMessages:any, chatList:any, setList:a
 
     function chatnew(data:any)
     {
+        if(props.chat.id !== data.id)
+        {
         props.setChat({id:data.id, name:data.name})
         props.setMessages([])
+        }
     }
 
     return(

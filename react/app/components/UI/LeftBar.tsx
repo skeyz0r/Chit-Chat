@@ -9,7 +9,7 @@ interface user {
     username:string
 }
 
-export default function LeftBar(props:{chatList:any, setMessages:any, setList:any, setToast:any, setChat:any, setNewChat:any, username:string, id:Number})
+export default function LeftBar(props:{chat:any, chatList:any, setMessages:any, setList:any, setToast:any, setChat:any, setNewChat:any, username:string, id:Number})
 {
     const [usr, findUser] = useState('')
     const [finder, setFinder] = useState('hidden')
@@ -79,7 +79,7 @@ export default function LeftBar(props:{chatList:any, setMessages:any, setList:an
                   <IoIosAddCircle size={30}/>
                   <p>New Chit-Chat</p>
           </div>
-            <ChatList setMessages={props.setMessages}  chatList={props.chatList} setList={props.setList} setChat={props.setChat} id={props.id}/>
+            <ChatList chat={props.chat} setMessages={props.setMessages}  chatList={props.chatList} setList={props.setList} setChat={props.setChat} id={props.id}/>
             </div>
             <div className="bg-white cursor-pointer flex gap-4 p-4 w-full mx-3 mb-3 justify-center items-center rounded-md border shadow-md">
                 <div className="p-2 rounded-full border"><GiRamProfile size={30}/></div>
