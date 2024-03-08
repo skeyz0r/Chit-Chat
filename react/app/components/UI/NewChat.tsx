@@ -1,35 +1,28 @@
 'use client'
 
-import { Key, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { FaCheck } from "react-icons/fa"
 import { FaSortDown } from "react-icons/fa";
 import { FaSortUp } from "react-icons/fa";
-import { useRouter } from "next/navigation";
-
-interface Chat {
-    name: string;
-    id: string;
-}
 
 interface newChat{
     author:Number,
     name:string
 }
 
-export default function NewChat(props:{setNew:any, setChat:any, chat_list:any, setToast:any, setList:any, authorId:Number})
+export default function NewChat(props:{setNew:any, setChat:any, setToast:any, setList:any, username:string, authorId:Number})
 {
 
     const [friend, setFriend] = useState<string[]>(['loading...'])
     const [select, setSelect] = useState<string[]>([])
     const [menu, setMenu] = useState('hidden')
     const [chatVal, setChatval] = useState<newChat>()
-    const path = useRouter()
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const id = props.authorId;
-                const data = await fetch('/api/friends', { method: 'POST', body: JSON.stringify({ id }) });
+                const username = props.username;
+                const data = await fetch('/api/friends', { method: 'POST', body: JSON.stringify({ username }) });
                 if (data.ok) {
                     const response = await data.json();
                     setFriend(response.answer);
@@ -90,7 +83,7 @@ async function createChat() {
     }
 }
     return(
-        <div className="w-[80%] flex flex-col items-center mt-14">
+        <div className="w-full md:w-[80%] flex flex-col items-center mt-14">
             <h2 className="text-3xl">Create new Chit-Chat</h2>
 
             <div className="flex flex-col">
@@ -127,20 +120,6 @@ async function createChat() {
                 </div>
 
                 <button onClick={()=>{createChat()}} className="p-4 shadow-md bg-black text-white border rounded-lg">Create Chit-Chat</button>
-
-                <div className="flex flex-col gap-4 mt-8">
-            {
-            props.chat_list ?     
-    props.chat_list.length > 0
-    ?                
-      props.chat_list?.map((data:Chat, key:Key)=>{
-        return(
-            <div className="p-4 border shadow-md bg-white
-             flex justify-center items-center" key={key}>{data.name}</div>
-        )
-      }) : <p>Loading chats...</p> : <p>No Chit-Chats, found please create one</p>
-    }
-      </div>
     </div>
             </div>
     )

@@ -25,7 +25,7 @@ export  async function POST(req:Request)
         }
         });
 
-        await pusherServer.trigger(String(id),'view', {username})
+        await pusherServer.trigger(String(id) + 'view','view', {username})
 
 
         return NextResponse.json({message:"Chat viewed!"}, {status:202})

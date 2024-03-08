@@ -19,6 +19,8 @@ export  async function POST(req:Request)
         }
     })
 
+    console.log(body, username)
+
     await db.message.create({
         data: {
             text: text,

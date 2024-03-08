@@ -5,17 +5,15 @@ export  async function POST(req:Request)
 {
     try{
         const body = await req.json()
-        const {id} = body;
+        const {username} = body;
         let friends = []
 
         const data = await db.user.findUnique({
-            where:{id:id},
+            where:{username:username},
             select:{
                friends:true
             }
-        })
-
-      
+        })      
 
         if(data?.friends)
         {

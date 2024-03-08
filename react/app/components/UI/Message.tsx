@@ -19,19 +19,6 @@ export default function Message(props:{chatId:string, sender:boolean, text:strin
     const [seen, setSeen] = useState(false)
     const [view, setView]  = useState([{username:'no one'}])
 
-    useEffect(()=>{
-        const channel = pusherClient.subscribe(props.chatId);
-                channel.bind("view", function (data: any) {
-                    setView((prevLoaded) => [
-                        ...prevLoaded,
-                        {username:data},
-                    ]);
-                });
-
-                return () => {
-                    pusherClient.unsubscribe(props.chatId);
-                };
-    }, [])
 
 
     return(
@@ -41,11 +28,19 @@ export default function Message(props:{chatId:string, sender:boolean, text:strin
             { props.seen[0] === 'viewed' || props.seen[0] === 'now seen' || props.seen[0] === 'seen' ? 
              <span className={`${sand.className} text-sm`}>{props.seen[0]}</span> : props.seen[0] === 'no one' ? 
              
-                view.map((data, key)=>{
-                    return(<p key={key}>
-                            {data.username}
-                    </p>)
-                })
+             <div>
+             <span onClick={()=>setSeen(!seen)} className={`${sand.className} text-sm underline cursor-pointer`}>Seen by</span>
+     <div>
+             <div className={`${seen ? ' visible' : 'hidden'} flex gap-4  border rounded`}>
+         {
+              view.map((data,key)=>{
+                 return(
+                     <p key={key} className=" font-sans text-sm">{data.username}</p>
+              )})
+         }
+         </div>
+     </div>
+     </div> 
              :
                 <div>
                             <span onClick={()=>setSeen(!seen)} className={`${sand.className} text-sm underline cursor-pointer`}>Seen by</span>

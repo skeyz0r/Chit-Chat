@@ -33,15 +33,15 @@ export  async function POST(req:Request)
 
         if(newFriend)
     {
-        const data = await db.user.update({
+        await db.user.update({
             where:{id: id},
             data:{
                 friends:{push: newFriend.id}
             },
         })
+        
 
-
-        return NextResponse.json({answer:false, message:`${username} is added to your friends list`}, {status:201})
+        return NextResponse.json({answer:[false, username], message:`${username} is added to your friends list`}, {status:200})
 
     }
 
@@ -54,13 +54,13 @@ export  async function POST(req:Request)
 }
 else
 {
-    return NextResponse.json({answer:true, message:`You and ${username} are already friends`}, {status:200})
+    return NextResponse.json({answer:true, message:`You and ${username} are already friends`}, {status:400})
 
 }
    }
    else
    {
-    return NextResponse.json({answer:true, message:`You are already your #1 friend`}, {status:200})
+    return NextResponse.json({answer:true, message:`You are already your #1 friend`}, {status:400})
 
    }
 

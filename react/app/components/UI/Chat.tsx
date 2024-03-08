@@ -22,9 +22,9 @@ export default function Chat_UI(props: {messages:any, setMessages:any, chat_id: 
     const [newMsg, setNew] = useState<boolean>(false);
 
     useEffect(() => {
+        const id = props.chat_id;
         async function getMsgs() {            
             if (props.chat_id && props.messages.length === 0) {
-                const id = props.chat_id;
                 const msgs = await fetch('/api/messages', { method: 'POST', body: JSON.stringify({ id }) });
     
                 if (msgs.ok) {
@@ -35,20 +35,22 @@ export default function Chat_UI(props: {messages:any, setMessages:any, chat_id: 
                 } else {
                     setNew(true);
                 }
-        
-                const channel = pusherClient.subscribe(String(id));
-                channel.bind("newMessage", function (data: any) {
-                    props.setMessages((prevLoaded: Message[]) => [
-                        ...prevLoaded,
-                        { text: data.text, date: Date.now().toString(), author: data.usr, viewed: [] },
-                    ]);
-                });
-
-                return () => {
-                    pusherClient.unsubscribe(String(id));
-                };
             }
+        
+            const channel = pusherClient.subscribe(String(id));
+            channel.bind("newMessage", function (data: any) {
+                props.setMessages((prevLoaded: Message[]) => [
+                    ...prevLoaded,
+                    { text: data.text, date: Date.now().toString(), author: data.usr, viewed: [] },
+                ]);
+            });
+
+            return () => {
+                pusherClient.unsubscribe(String(id));
+                pusherClient.unsubscribe(String(id) + 'view')
+            };
         }
+        
         getMsgs();
     }, [props.messages]);
 
@@ -77,7 +79,7 @@ export default function Chat_UI(props: {messages:any, setMessages:any, chat_id: 
     }
 
     return (
-        <main className="flex flex-col h-full w-[80%] bg-gray-200 cursor-default">
+        <main className="flex flex-col h-full w-full md:w-[80%] bg-gray-200 cursor-default">
             <div className={`${props.chat_id === undefined ? 'hidden' : 'visible'} flex justify-center 
             flex-col text-2xl pt-4 bg-white rounded-b-md w-full`}>
                 <p className={`${com.className} self-center mb-3 text-black`}>{props.chat_name}</p>
