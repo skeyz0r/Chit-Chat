@@ -106,9 +106,9 @@ export default function Profile(props:{friends:any, setFriends:any, chat_list:an
                     props.friends[0] === 'loading...' ? <p>Loading...</p> : props.friends[0] === "No friends :(" ? <p>No friends</p> :
                     props.friends.map((data:string, key:number)=>{
                       return(
-                          <div className="flex gap-4 items-center"> 
+                          <div key={key} className="flex gap-4 items-center"> 
                           <p className={`${sand.className} p-4 rounded border shadow-md bg-black
-                           flex justify-center items-center text-white`} key={key}>{data}</p>
+                           flex justify-center items-center text-white`} >{data}</p>
                            <button onClick={()=>{deleteFriend(data)}} className="p-2 text-sm rounded bg-red-500 hover:bg-red-600 text-white w-fit h-fit">REMOVE</button>
                            </div>
                       )      
