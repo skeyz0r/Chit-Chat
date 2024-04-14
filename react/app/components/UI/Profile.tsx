@@ -89,9 +89,9 @@ export default function Profile(props:{friends:any, setFriends:any, chat_list:an
     ?                
       props.chat_list?.map((data:Chat, key:number)=>{
         return(
-            <div className="flex flex-col items-center">
+            <div key={key} className="flex flex-col items-center">
             <div className={`${sand.className} p-4 rounded border shadow-md bg-white
-             flex justify-center items-center`} key={key}>{data.name}</div>
+             flex justify-center items-center`} >{data.name}</div>
              <button onClick={()=>deleteChat(data.id)} className={`${readex.className} py-4 px-2 rounded shadow text-white hover:bg-red-600 mt-3 bg-red-500`}>{`${conf ? 'CLICK AGAIN' : 'DELETE'}`}</button>
              </div>
         )
